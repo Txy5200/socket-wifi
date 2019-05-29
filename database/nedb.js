@@ -2,7 +2,7 @@ const Datastore = require('nedb')
 
 // exports.adminDB = new Datastore({ filename: `./db/admin.db`, autoload: true })
 // exports.patientDB = new Datastore({ filename: `./db/patient.db`, autoload: true })
-// exports.recordDB = new Datastore({ filename: `./db/record.db`, autoload: true })
+exports.recordDB = new Datastore({ filename: `./db/record.db`, autoload: true })
 // exports.gaitDB = new Datastore({ filename: `./db/gait.db`, autoload: true })
 exports.pressDB = new Datastore({ filename: `./db/press.db`, autoload: true })
 // exports.pressAdDB = new Datastore({ filename: `./db/pressAd.db`, autoload: true })

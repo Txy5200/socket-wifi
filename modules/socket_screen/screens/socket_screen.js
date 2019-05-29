@@ -4,8 +4,8 @@ import ChartCopLine from '../../common/screens/line_chart'
 import ChartScatter from '../../common/screens/chart_pressure_scatter'
 import { Button, message } from 'antd'
 import { openPort, closePort } from '../../../ducks'
+import { variables } from '../../../global_variables'
 var socket = require('socket.io-client')('http://localhost:8897', {autoConnect: false})
-import {variables} from '../../../global_variables'
 
 class SocketScreen extends Component {
   constructor(props) {
@@ -13,7 +13,8 @@ class SocketScreen extends Component {
     this.state = {
       deviceArrayJson: {},
       isStart: false,
-      initxAxisData: []
+      initxAxisData: [],
+      pressureArrayData: []
     }
   }
 
@@ -26,6 +27,14 @@ class SocketScreen extends Component {
     this.setOnDevice()
   }
 
+  // 开始检测后定时获取全局变量中的数据
+  intervalFunc() {
+    const { data_position } = variables;
+    const { left, right } = data_position;
+    let pressureArrayData = [...left, ...right];
+    this.setState({ pressureArrayData });
+  }
+
   setOnDevice() {
     socket.on('connect', function() {
       console.log('connect========>')
@@ -36,16 +45,7 @@ class SocketScreen extends Component {
     socket.on('disconnect', function() {
       console.log('disconnect========>')
     })
-  }
 
-  async startSocket() {
-    // const { openPort } = this.props
-    // let data = await openPort({})
-    // if (data) {
-    //   message.error(data)
-    // } else {
-    socket.open()
-    this.setState({ isStart: true })
     socket.on('send', data => {
       let { deviceArrayJson, isStart } = this.state
       if (isStart) {
@@ -56,16 +56,33 @@ class SocketScreen extends Component {
         this.setState({ deviceArrayJson })
       }
     })
-    // }
   }
 
-  async endSocket() {
-    const { closePort } = this.props
-    let data = await closePort()
+  // 开始
+  async startSocket() {
+    const { openPort } = this.props
+    let data = await openPort()
+    socket.open()
     if (data) {
+      socket.disconnect()
       message.error(data)
     } else {
-      socket.disconnect()
+      this.timeOut = setInterval(this.intervalFunc.bind(this), 20);
+      this.setState({ isStart: true })
+    }
+  }
+
+  // 停止
+  async endSocket() {
+    const { closePort } = this.props
+    const { deviceArrayJson } = this.state
+    let data = await closePort(deviceArrayJson)
+    socket.disconnect()
+    if (data) {
+      socket.open()
+      message.error(data)
+    } else {
+      clearInterval(this.timeOut)
       this.setState({ isStart: false })
     }
   }
@@ -92,20 +109,20 @@ class SocketScreen extends Component {
         >
           {isStart ? '停止' : '开始'}
         </Button>
-        <Button
+        {/* <Button
           onClick={() => {
             this.saveData()
           }}
           disabled={isStart}
         >
           保存
-        </Button>
+        </Button> */}
       </div>
     )
   }
 
   render() {
-    const { deviceArrayJson, initxAxisData } = this.state
+    const { deviceArrayJson, initxAxisData, pressureArrayData } = this.state
 
     let array = []
     for (let key in deviceArrayJson) {
@@ -119,7 +136,7 @@ class SocketScreen extends Component {
         {this.renderBtns()}
         <div className={'screen_content'}>
           <div className={'press_chart'}>
-            <ChartScatter data={[]} />
+            <ChartScatter data={pressureArrayData} />
           </div>
           <div className={'line_charts'}>
             {array.map((item, index) => {

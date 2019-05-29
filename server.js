@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 require('./socket_server')
 // 定义全局变量，供页面使用
-global.variables = require('./global_variables').variables
+// global.variables = require('./global_variables').variables
 
 app.prepare().then(() => {
   const server = express()

@@ -21,13 +21,25 @@ export const openPort = () => async dispatch => {
   }
 }
 
-export const closePort = () => async dispatch => {
+export const closePort = (wifiData) => async dispatch => {
   try {
-    const data = await request('/serialport/closePort')
+    const data = await request('/serialport/closePort', {wifiData})
     if (data.code !== '200') {
       return data.msg
     }
   } catch (e) {
+    console.log(e)
+    return e.message
+  }
+}
+
+export const saveWifiData = (wifiData) => async dispatch => {
+  try{
+    const data = await request('/serialport/saveWifiData', {wifiData})
+    if (data.code !== '200') {
+      return data.msg
+    }
+  }catch(e){
     console.log(e)
     return e.message
   }
