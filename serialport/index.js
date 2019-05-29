@@ -151,3 +151,5 @@ exports.querySerialportList = cb => {
     cb(result)
   })
 }
+
+exports.sendDataToSave = sendDataToSave

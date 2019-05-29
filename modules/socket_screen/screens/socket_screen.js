@@ -28,12 +28,12 @@ class SocketScreen extends Component {
   }
 
   // 开始检测后定时获取全局变量中的数据
-  intervalFunc() {
-    const { data_position } = variables;
-    const { left, right } = data_position;
-    let pressureArrayData = [...left, ...right];
-    this.setState({ pressureArrayData });
-  }
+  // intervalFunc() {
+  //   const { data_position } = variables;
+  //   const { left, right } = data_position;
+  //   let pressureArrayData = [...left, ...right];
+  //   this.setState({ pressureArrayData });
+  // }
 
   setOnDevice() {
     socket.on('connect', function() {
@@ -56,6 +56,10 @@ class SocketScreen extends Component {
         this.setState({ deviceArrayJson })
       }
     })
+
+    socket.on('pressData', pressureArrayData => {
+      this.setState({ pressureArrayData })
+    })
   }
 
   // 开始
@@ -67,7 +71,7 @@ class SocketScreen extends Component {
       socket.disconnect()
       message.error(data)
     } else {
-      this.timeOut = setInterval(this.intervalFunc.bind(this), 20);
+      // this.timeOut = setInterval(this.intervalFunc.bind(this), 20);
       this.setState({ isStart: true })
     }
   }
@@ -82,7 +86,7 @@ class SocketScreen extends Component {
       socket.open()
       message.error(data)
     } else {
-      clearInterval(this.timeOut)
+      // clearInterval(this.timeOut)
       this.setState({ isStart: false })
     }
   }
