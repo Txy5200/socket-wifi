@@ -59,7 +59,7 @@ const availablePorts = () => {
           const { sensorData_AD, sensorData, posturedata } = msg
 
           // 给每条数据添加上传时间
-          const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
+          const currentTime = Date.now()
           sensorData_AD.push(currentTime)
           sensorData.push(currentTime)
           posturedata.push(currentTime)
@@ -151,3 +151,5 @@ exports.querySerialportList = cb => {
     cb(result)
   })
 }
+
+exports.sendDataToSave = sendDataToSave

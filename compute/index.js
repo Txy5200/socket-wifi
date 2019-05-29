@@ -2,7 +2,7 @@
 /* eslint-disable no-path-concat */
 const { fork } = require('child_process')
 const { variables } = require('../global_variables')
-const timeToByteArray = require('../lib')
+// const timeToByteArray = require('../lib')
 
 let gaitChild = fork(__dirname + '/compute_for_gait.js', { silent: true })
 let glChild = fork(__dirname + '/compute_for_gl.js', { silent: true })
@@ -63,7 +63,10 @@ exports.conputeData = data => {
   if (glChild.connected) glChild.stdin.write(data_buffer)
 
   const { start_time } = variables.recordInfo
+  // console.log('variables========>', variables)
+  // console.log('start_time=======>', start_time)
   const current_time = data[44]
+  // console.log('current_time=======>', current_time)
   if (!start_time || !current_time) {
     console.log('缺少时间')
   } else {
@@ -72,6 +75,22 @@ exports.conputeData = data => {
     let buf = Buffer.concat([data_buffer, start_buffer, current_buffer])
     if (gaitChild.connected) gaitChild.stdin.write(buf)
   }
+}
+
+const timeToByteArray = msTIme => {
+  let array = []
+
+  const handleTIme = time => {
+    if (time < 256) array.unshift(time)
+    else {
+      let rest = time % 256
+      array.unshift(rest)
+      handleTIme(Math.floor(time / 256))
+    }
+  }
+
+  handleTIme(msTIme)
+  return Buffer.from(array)
 }
 
 // 初始化变量
