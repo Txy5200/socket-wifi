@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 const { insertRecord, insertWifiData, removeRecords } = require('../database')
-const { openSerialport, closeSerialport } = require('../serialport')
+const { openSerialport, closeSerialport, sendDataToSave } = require('../serialport')
 const { variables } = require('../global_variables')
 const { initializeCompute } = require('../compute')
 

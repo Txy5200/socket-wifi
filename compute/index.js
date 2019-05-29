@@ -3,6 +3,8 @@
 const { fork } = require('child_process')
 const { variables } = require('../global_variables')
 // const timeToByteArray = require('../lib')
+const webClients = require('../socket_web_server').webClients
+
 
 let gaitChild = fork(__dirname + '/compute_for_gait.js', { silent: true })
 let glChild = fork(__dirname + '/compute_for_gl.js', { silent: true })
@@ -31,6 +33,9 @@ glChild.on('message', msg => {
       } else {
         variables.data_position.right = msg.data_position.data
       }
+      webClients.forEach((client) => {
+        client.emit('pressData', msg.data_position.data)
+      })
       break
     case 'cop':
       variables.copInfo = msg.copInfo
