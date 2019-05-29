@@ -3,7 +3,8 @@ const moment = require('moment')
 
 exports.insertRecord = ({ shoe_size }, callback) => {
   let record_time = moment().format('YYYY-MM-DD HH:mm:ss')
-  recordDB.insert({ record_time, shoe_size }, callback)
+  let start_time = Date.now()
+  recordDB.insert({ record_time, shoe_size, start_time }, callback)
 }
 
 exports.removeRecords = (ids, callback) => {

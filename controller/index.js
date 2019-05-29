@@ -1,17 +1,10 @@
 var express = require('express')
 var router = express.Router()
-const { insertRecord, insertWifiData, insertSerialprotData, removeRecords } = require('../database')
+const { insertRecord, insertWifiData, removeRecords } = require('../database')
 const { openSerialport, closeSerialport } = require('../serialport')
 const { variables } = require('../global_variables')
 const { initializeCompute } = require('../compute')
-let press_temp = []
-let temp = 10000 // 计数器 用于批量插入数据
 
-const sendDataToSave = () => {
-  insertSerialprotData({ press: press_temp })
-  press_temp = []
-  temp = 10000
-}
 
 router.post('/openPort', function(req, res) {
   // 创建或者更新患者信息
@@ -60,20 +53,4 @@ router.post('/closePort', function(req, res) {
   })
 })
 
-// 保存串口数据到数据库
-const saveData = ({ sensorData_AD, sensorData, posturedata }) => {
-  let pressObj = {}
-  pressObj['$record_id'] = variables.recordInfo.record_time
-  pressObj['$lr'] = sensorData[0]
-  pressObj['$num_order'] = sensorData[1]
-  pressObj['$current_time'] = sensorData_AD[44]
-  for (let i = 2; i < 44; i++) {
-    pressObj[`$force${i - 1}`] = sensorData[i]
-  }
-  press_temp.push(pressObj)
-
-  temp--
-  if (temp <= 0) sendDataToSave()
-}
-
-module.exports = { saveData, router }
+module.exports = { router }

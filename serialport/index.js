@@ -1,11 +1,20 @@
 /* eslint-disable no-path-concat */
-const { saveData } = require('../controller')
 const serialport = require('serialport')
 const fork = require('child_process').fork
 const conputeData = require('../compute').conputeData
 const moment = require('moment')
-
+const { variables } = require('../global_variables')
+const { insertSerialprotData } = require('../database')
 const except = ['SOC', 'MALS', 'Bluetooth-Incoming-Port', 'usbmodem14411']
+
+let press_temp = []
+let temp = 10000 // 计数器 用于批量插入数据
+
+const sendDataToSave = () => {
+  insertSerialprotData({ press: press_temp })
+  press_temp = []
+  temp = 10000
+}
 
 // 记录已连接的串口
 let connectPorts = {}
@@ -62,6 +71,22 @@ const availablePorts = () => {
       })
     })
   })
+}
+
+// 保存串口数据到数据库
+const saveData = ({ sensorData_AD, sensorData, posturedata }) => {
+  let pressObj = {}
+  pressObj['$record_id'] = variables.recordInfo.record_time
+  pressObj['$lr'] = sensorData[0]
+  pressObj['$num_order'] = sensorData[1]
+  pressObj['$current_time'] = sensorData_AD[44]
+  for (let i = 2; i < 44; i++) {
+    pressObj[`$force${i - 1}`] = sensorData[i]
+  }
+  press_temp.push(pressObj)
+
+  temp--
+  if (temp <= 0) sendDataToSave()
 }
 
 //  // 打开系统即查询一下串口信息 并 设置定时任务
