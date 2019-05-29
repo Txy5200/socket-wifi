@@ -1,0 +1,48 @@
+.socket_screen {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+.screen_content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.line_charts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.line-react {
+  width: 100%;
+}
+
+.dynamic_pressure_content_img {
+  background: url('/static/icons/Sole.png') no-repeat;
+  width: 25.543vw;
+  margin-top: 4.01vw;
+  height: 28.021vw;
+  background-size: 23.543vw 28.021vw;
+  background-position-x: 0.85vw;
+}
+
+.dynamic_pressure_content_img>div {
+  width: 23.543vw !important;
+  height: 28.021vw !important;
+}
+
+.dynamic_pressure_content_img>div>canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.scatter-bottom-span {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: #0999fd;
+}

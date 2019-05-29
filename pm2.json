@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "socket_test",
+      "script": "server.js",
+      "watch": false,
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "exec_interpreter": "node"
+    }
+  ]
+}
